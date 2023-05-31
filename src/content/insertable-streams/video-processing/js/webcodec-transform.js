@@ -18,7 +18,19 @@ class WebCodecTransform { // eslint-disable-line no-unused-vars
     this.decoder_ = null;
     this.encoder_ = null;
     this.controller_ = null;
+
+    /** TODO(riju) : Put up multiple filters */
+    this.filter_brightness_ = null;
+    /**
+    this.filter_contrast_ = null;
+    this.filter_hue_ = null;
+    this.filter_saturation_ = null;
+    this.filter_whitebalance_ = null;
+    //this.filter_colorspaceconversion_ = null;
+    this.filter_denoise_ = null;
+    **/
   }
+
   /** @override */
   async init() {
     console.log('[WebCodecTransform] Initializing encoder and decoder');
@@ -30,8 +42,52 @@ class WebCodecTransform { // eslint-disable-line no-unused-vars
       output: frame => this.handleEncodedFrame(frame),
       error: this.error
     });
+
+    /**
+    this.filterBrightness_ = new VideoFilter({
+      output: frame => this.handleFilteredFrame(frame),
+      error: this.error
+    });
+
+    this.filterContrast_ = new VideoFilter({
+      output: frame => this.handleFilteredFrame(frame),
+      error: this.error
+    });
+
+    this.filterHue_ = new VideoFilter({
+      output: frame => this.handleFilteredFrame(frame),
+      error: this.error
+    });
+
+    this.filterSaturation_ = new VideoFilter({
+      output: frame => this.handleFilteredFrame(frame),
+      error: this.error
+    });
+
+    this.filterWhitebalance_ = new VideoFilter({
+      output: frame => this.handleFilteredFrame(frame),
+      error: this.error
+    });
+
+    this.filterDenoise_ = new VideoFilter({
+      output: frame => this.handleFilteredFrame(frame),
+      error: this.error
+    });
+  */
+
     this.encoder_.configure({codec: 'vp8', width: 640, height: 480});
     this.decoder_.configure({codec: 'vp8', width: 640, height: 480});
+
+  /** TODO(riju) : Put up multiple filters */
+  // console.log ("Riju : ", parseInt(document.querySelector("#brightnessSliderValue")));
+  // this.filterBrightness_.configure({filter: 'brightness', width: 640, height: 480, strength: parseInt(document.querySelector("#brightnessSliderValue"))});
+  /*
+    this.filterContrast_.configure({filter: 'contrast', width: 640, height: 480, strength: 0.5 });
+    this.filterHue_.configure({filter: 'hue', width: 640, height: 480, strength: 0.5 });
+    this.filterSaturation_.configure({filter: 'saturation', width: 640, height: 480, strength: 0.5 });
+    this.filterWhitebalance_.configure({filter: 'whitebalance', width: 640, height: 480, strength: 0.5 });
+    this.filterDenoise_.configure({filter: 'denoise', width: 640, height: 480, strength: 0.5 });
+  */
   }
 
   /** @override */
@@ -62,6 +118,11 @@ class WebCodecTransform { // eslint-disable-line no-unused-vars
       return;
     }
     this.controller_.enqueue(videoFrame);
+  }
+
+  // TODO(riju) : Do nothing now.
+  handleFilteredFrame(frame) {
+   return;
   }
 
   error(e) {

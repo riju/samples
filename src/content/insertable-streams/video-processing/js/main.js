@@ -8,6 +8,18 @@
 
 'use strict';
 
+/**
+ TODO(riju): Save video filter values as a key-value array
+ * or just read the span id value
+ */
+var sliders = document.getElementsByClassName("slider");
+
+for(var i=0; i<(sliders.length); i++) {
+  sliders[i].addEventListener('input', function() {
+    document.getElementById(this.getAttribute('id')+'Value').innerText = this.value;
+  });
+}
+
 /* global MediaStreamTrackProcessor, MediaStreamTrackGenerator */
 if (typeof MediaStreamTrackProcessor === 'undefined' ||
     typeof MediaStreamTrackGenerator === 'undefined') {
