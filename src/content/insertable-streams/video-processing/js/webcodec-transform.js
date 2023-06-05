@@ -78,16 +78,6 @@ class WebCodecTransform { // eslint-disable-line no-unused-vars
     this.encoder_.configure({codec: 'vp8', width: 640, height: 480});
     this.decoder_.configure({codec: 'vp8', width: 640, height: 480});
 
-  /** TODO(riju) : Put up multiple filters */
-  // console.log ("Riju : ", parseInt(document.querySelector("#brightnessSliderValue")));
-  // this.filterBrightness_.configure({filter: 'brightness', width: 640, height: 480, strength: parseInt(document.querySelector("#brightnessSliderValue"))});
-  /*
-    this.filterContrast_.configure({filter: 'contrast', width: 640, height: 480, strength: 0.5 });
-    this.filterHue_.configure({filter: 'hue', width: 640, height: 480, strength: 0.5 });
-    this.filterSaturation_.configure({filter: 'saturation', width: 640, height: 480, strength: 0.5 });
-    this.filterWhitebalance_.configure({filter: 'whitebalance', width: 640, height: 480, strength: 0.5 });
-    this.filterDenoise_.configure({filter: 'denoise', width: 640, height: 480, strength: 0.5 });
-  */
   }
 
   /** @override */
