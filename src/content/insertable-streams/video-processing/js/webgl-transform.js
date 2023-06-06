@@ -43,53 +43,31 @@ class WebGLTransform { // eslint-disable-line no-unused-vars
     this.gl_ = gl;
     const vertexShader = this.loadShader_(gl.VERTEX_SHADER, `
       precision mediump float;
-      attribute vec4 g_Position;
+      attribute vec3 g_Position;
       attribute vec2 g_TexCoord;
-
       varying vec2 texCoord;
-
       void main() {
+        gl_Position = vec4(g_Position, 1.0);
         texCoord = g_TexCoord;
-
-        gl_Position = g_Position;
       }`);
-
     const fragmentShader = this.loadShader_(gl.FRAGMENT_SHADER, `
       precision mediump float;
-      
-      uniform float u_brightness;
-      uniform float u_contrast;
-      uniform float u_saturation;
-
+      varying vec2 texCoord;
       uniform sampler2D inSampler;
-
-      vec3 adjustBrightness(vec3 color, float value) {
-        return color + value;
-      }
-
-      vec3 adjustContrast(vec3 color, float value) {
-        return 0.5 + (1.0 + value) * (color - 0.5);
-      }
-
-      vec3 adjustSaturation(vec3 color, float value) {
-        // https://www.w3.org/TR/WCAG21/#dfn-relative-luminance
-        const vec3 luminosityFactor = vec3(0.2126, 0.7152, 0.722);
-        vec3 grayscale = vec3(dot(color, luminosityFactor));
-        
-        return mix(grayscale, color, 1.0 + value);
-      }
-
-      void main() {
-        vec4 texel = texture2D(inSampler, texCoord);
-        vec3 color = texel.rgb;
-
-        color = adjustBrightness(color, u_brightness);
-        color = adjustContrast(color, u_contrast);
-        color = adjustSaturation(color, u_saturation);
-
-        gl_FragColor = vec4(color, texel.a);
-      }
-
+      void main(void) {
+        float boundary = distance(texCoord, vec2(0.5)) - 0.2;
+        if (boundary < 0.0) {
+          gl_FragColor = texture2D(inSampler, texCoord);
+        } else {
+          // Rotate the position
+          float angle = 2.0 * boundary;
+          vec2 rotation = vec2(sin(angle), cos(angle));
+          vec2 fromCenter = texCoord - vec2(0.5);
+          vec2 rotatedPosition = vec2(
+            fromCenter.x * rotation.y + fromCenter.y * rotation.x,
+            fromCenter.y * rotation.y - fromCenter.x * rotation.x) + vec2(0.5);
+          gl_FragColor = texture2D(inSampler, rotatedPosition);
+        }
       }`);
     if (!vertexShader || !fragmentShader) return;
     // Create the program object
