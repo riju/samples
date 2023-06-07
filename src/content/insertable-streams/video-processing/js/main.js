@@ -281,6 +281,21 @@ function initUI() {
   sinkSelector.oninput = updatePipelineSink;
   sinkSelector.disabled = false;
 
+  function addSliderHandler(id) {
+    const slider = document.getElementById(id + 'Slider');
+    slider.oninput = function() {
+      let settings = { }
+      settings[id] = slider.value;
+      pipeline.updateSettings(settings);
+    }
+  }
+  addSliderHandler('brightness');
+  addSliderHandler('contrast');
+  addSliderHandler('hue');
+  addSliderHandler('saturation');
+  addSliderHandler('whitebalance');
+  addSliderHandler('denoise');
+
   /**
    * Initializes/reinitializes the pipeline. Called on page load and after the
    * user chooses to stop the video source.

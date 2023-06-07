@@ -81,6 +81,7 @@ class FrameTransform { // eslint-disable-line no-unused-vars
    */
   async transform(frame, controller) {}
   /** Frees any resources used by this object. */
+  updateSettings(newSettings) {}
   destroy() {}
 }
 
@@ -199,6 +200,11 @@ class Pipeline { // eslint-disable-line no-unused-vars
     } else {
       await this.maybeStartPipeline_();
     }
+  }
+
+  updateSettings(newSettings) {
+    if (this.frameTransform_)
+      this.frameTransform_.updateSettings(newSettings);
   }
 
   /** Frees any resources used by this object. */

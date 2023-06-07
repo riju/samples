@@ -20,6 +20,8 @@ class NullTransform { // eslint-disable-line no-unused-vars
     controller.enqueue(frame);
   }
   /** @override */
+  updateSettings(newSettings) {}
+  /** @override */
   destroy() {}
 }
 
@@ -39,6 +41,8 @@ class DropTransform { // eslint-disable-line no-unused-vars
     }
   }
   /** @override */
+  updateSettings(newSettings) {}
+  /** @override */
   destroy() {}
 }
 
@@ -54,6 +58,8 @@ class DelayTransform { // eslint-disable-line no-unused-vars
     await new Promise(resolve => setTimeout(resolve, 100));
     controller.enqueue(frame);
   }
+  /** @override */
+  updateSettings(newSettings) {}
   /** @override */
   destroy() {}
 }

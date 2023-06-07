@@ -69,5 +69,8 @@ class CanvasTransform { // eslint-disable-line no-unused-vars
   }
 
   /** @override */
+  updateSettings(newSettings) {}
+
+  /** @override */
   destroy() {}
 }

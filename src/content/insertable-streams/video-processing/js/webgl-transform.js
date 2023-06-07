@@ -54,10 +54,19 @@ class WebGLTransform { // eslint-disable-line no-unused-vars
       precision mediump float;
       varying vec2 texCoord;
       uniform sampler2D inSampler;
+
+      uniform float brightness;
+      uniform float contrast;
+      uniform float hue;
+      uniform float saturation;
+      uniform float whitebalance;
+      uniform float denoise;
+
       void main(void) {
         float boundary = distance(texCoord, vec2(0.5)) - 0.2;
+        vec4 t;
         if (boundary < 0.0) {
-          gl_FragColor = texture2D(inSampler, texCoord);
+          t = texture2D(inSampler, texCoord);
         } else {
           // Rotate the position
           float angle = 2.0 * boundary;
@@ -66,8 +75,21 @@ class WebGLTransform { // eslint-disable-line no-unused-vars
           vec2 rotatedPosition = vec2(
             fromCenter.x * rotation.y + fromCenter.y * rotation.x,
             fromCenter.y * rotation.y - fromCenter.x * rotation.x) + vec2(0.5);
-          gl_FragColor = texture2D(inSampler, rotatedPosition);
+          t = texture2D(inSampler, rotatedPosition);
         }
+
+        // adjust brightness
+        t = t + brightness;
+
+        // adjust contrast
+        t = 0.5 + (1.0 + contrast) * (t - 0.5);
+
+        // adjust saturation, https://www.w3.org/TR/WCAG21/#dfn-relative-luminance
+        const vec4 luminosityFactor = vec4(0.2126, 0.7152, 0.722, 0.0);
+        vec4 grayscale = vec4(dot(t, luminosityFactor));
+        t = mix(grayscale, t, saturation);
+
+        gl_FragColor = vec4(t[0], t[1], t[2], 1.0);
       }`);
     if (!vertexShader || !fragmentShader) return;
     // Create the program object
@@ -104,6 +126,14 @@ class WebGLTransform { // eslint-disable-line no-unused-vars
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    this.uniformLoc_ = {
+        brightness:   gl.getUniformLocation(programObject, "brightness"),
+        contrast:     gl.getUniformLocation(programObject, "contrast"),
+        hue:          gl.getUniformLocation(programObject, "hue"),
+        saturation:   gl.getUniformLocation(programObject, "saturation"),
+        whitebalance: gl.getUniformLocation(programObject, "whitebalance"),
+        denoise:      gl.getUniformLocation(programObject, "denoise"),
+    };
     console.log(
         '[WebGLTransform] WebGL initialized.', `${this.debugPath_}.canvas_ =`,
         this.canvas_, `${this.debugPath_}.gl_ =`, this.gl_);
@@ -176,6 +206,25 @@ class WebGLTransform { // eslint-disable-line no-unused-vars
     gl.bindTexture(gl.TEXTURE_2D, null);
     // alpha: 'discard' is needed in order to send frames to a PeerConnection.
     controller.enqueue(new VideoFrame(this.canvas_, {timestamp, alpha: 'discard'}));
+  }
+
+  /** @override */
+  updateSettings(newSettings) {
+    const gl = this.gl_;
+    if (!gl)
+      return;
+    if (newSettings["brightness"] !== undefined)
+      gl.uniform1f(this.uniformLoc_["brightness"], newSettings["brightness"] / 50.0 - 1.0);
+    if (newSettings["contrast"] !== undefined)
+      gl.uniform1f(this.uniformLoc_["contrast"], newSettings["contrast"] / 50.0 - 1.0);
+    if (newSettings["hue"] !== undefined)
+      gl.uniform1f(this.uniformLoc_["hue"], newSettings["hue"]);
+    if (newSettings["saturation"] !== undefined)
+      gl.uniform1f(this.uniformLoc_["saturation"], newSettings["saturation"] / 50.0);
+    if (newSettings["whitebalance"] !== undefined)
+      gl.uniform1f(this.uniformLoc_["whitebalance"], newSettings["whitebalance"]);
+    if (newSettings["denoise"] !== undefined)
+      gl.uniform1f(this.uniformLoc_["denoise"], newSettings["denoise"]);
   }
 
   /** @override */

@@ -105,6 +105,9 @@ class WebCodecTransform { // eslint-disable-line no-unused-vars
   }
 
   /** @override */
+  updateSettings(newSettings) {}
+
+  /** @override */
   destroy() {}
 
   /* Helper functions */
