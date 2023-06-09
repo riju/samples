@@ -30,6 +30,7 @@ class WebGLTransform { // eslint-disable-line no-unused-vars
   }
   /** @override */
   async init() {
+console.log('===== T init');
     console.log('[WebGLTransform] Initializing WebGL.');
     this.canvas_ = new OffscreenCanvas(1, 1);
     const gl = /** @type {?WebGLRenderingContext} */ (
@@ -198,9 +199,14 @@ class WebGLTransform { // eslint-disable-line no-unused-vars
 
   /** @override */
   updateSettings(newSettings) {
+console.log('===== T updateSettings');
+console.log(newSettings);
     const gl = this.gl_;
-    if (!gl)
+    if (!gl) {
+console.log('===== T updateSettings NOT updating');
       return;
+}
+console.log('===== T updateSettings updating');
     if (newSettings["brightness"] !== undefined)
       gl.uniform1f(this.uniformLoc_["brightness"], newSettings["brightness"] / 50.0 - 1.0);
     if (newSettings["contrast"] !== undefined)

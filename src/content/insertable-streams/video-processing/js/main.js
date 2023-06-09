@@ -193,6 +193,7 @@ function initUI() {
     } else {
       updatePipelineSourceIfSet();
     }
+    updateSettings();
   }
   sourceSelector.oninput = updatePipelineSource;
   sourceSelector.disabled = false;
@@ -253,6 +254,7 @@ function initUI() {
         alert(`unknown transform ${transformType}`);
         break;
     }
+    updateSettings();
   }
   transformSelector.oninput = updatePipelineTransform;
   transformSelector.disabled = false;
@@ -277,6 +279,7 @@ function initUI() {
         alert(`unknown sink ${sinkType}`);
         break;
     }
+    updateSettings();
   }
   sinkSelector.oninput = updatePipelineSink;
   sinkSelector.disabled = false;
@@ -296,6 +299,18 @@ function initUI() {
   addSliderHandler('whitebalance');
   addSliderHandler('denoise');
 
+  function updateSettings() {
+    const settings = {
+      brightness:   document.getElementById('brightnessSlider').value,
+      contrast:     document.getElementById('contrastSlider').value,
+      hue:          document.getElementById('hueSlider').value,
+      saturation:   document.getElementById('saturationSlider').value,
+      whitebalance: document.getElementById('whitebalanceSlider').value,
+      denoise:      document.getElementById('denoiseSlider').value,
+    };
+    pipeline.updateSettings(settings);
+  }
+
   /**
    * Initializes/reinitializes the pipeline. Called on page load and after the
    * user chooses to stop the video source.
@@ -307,6 +322,7 @@ function initUI() {
     updatePipelineSourceIfSet();
     updatePipelineTransform();
     updatePipelineSink();
+    updateSettings();
     console.log(
         '[initPipeline] Created new Pipeline.', 'debug.pipeline =', pipeline);
   }

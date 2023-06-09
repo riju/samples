@@ -130,6 +130,7 @@ class Pipeline { // eslint-disable-line no-unused-vars
    * @param {!MediaStreamSource} mediaStreamSource
    */
   async updateSource(mediaStreamSource) {
+console.log('==== updateSource');
     if (this.source_) {
       this.abortController_.abort();
       this.abortController_ = new AbortController();
@@ -142,12 +143,15 @@ class Pipeline { // eslint-disable-line no-unused-vars
         '[Pipeline] Updated source.',
         'debug.pipeline.source_ = ', this.source_);
     await this.maybeStartPipeline_();
+console.log('==== updateSource E');
   }
 
   /** @private */
   async maybeStartPipeline_() {
+console.log('==== maybeStartPipeline_');
     if (this.processedStream_ || !this.source_ || !this.frameTransform_ ||
         !this.sink_) {
+console.log('==== maybeStartPipeline_ E0');
       return;
     }
     const sourceStream = await this.source_.getMediaStream();
@@ -161,12 +165,14 @@ class Pipeline { // eslint-disable-line no-unused-vars
           }, this.abortController_.signal);
     } catch (e) {
       this.destroy();
+console.log('==== maybeStartPipeline_ E1');
       return;
     }
     await this.sink_.setMediaStream(this.processedStream_);
     console.log(
         '[Pipeline] Pipeline started.',
         'debug.pipeline.abortController_ =', this.abortController_);
+console.log('==== maybeStartPipeline_ E');
   }
 
   /**
@@ -174,6 +180,7 @@ class Pipeline { // eslint-disable-line no-unused-vars
    * @param {!FrameTransform} frameTransform
    */
   async updateTransform(frameTransform) {
+console.log('==== updateTransform');
     if (this.frameTransform_) this.frameTransform_.destroy();
     this.frameTransform_ = frameTransform;
     console.log(
@@ -184,6 +191,7 @@ class Pipeline { // eslint-disable-line no-unused-vars
     } else {
       await this.maybeStartPipeline_();
     }
+console.log('==== updateTransform E');
   }
 
   /**
@@ -191,6 +199,7 @@ class Pipeline { // eslint-disable-line no-unused-vars
    * @param {!MediaStreamSink} mediaStreamSink
    */
   async updateSink(mediaStreamSink) {
+console.log('==== updateSink');
     if (this.sink_) this.sink_.destroy();
     this.sink_ = mediaStreamSink;
     console.log(
@@ -200,9 +209,11 @@ class Pipeline { // eslint-disable-line no-unused-vars
     } else {
       await this.maybeStartPipeline_();
     }
+console.log('==== updateSink E');
   }
 
   updateSettings(newSettings) {
+console.log('==== updateSettings');
     if (this.frameTransform_)
       this.frameTransform_.updateSettings(newSettings);
   }
