@@ -64,19 +64,7 @@ class WebGLTransform { // eslint-disable-line no-unused-vars
 
       void main(void) {
         float boundary = distance(texCoord, vec2(0.5)) - 0.2;
-        vec4 t;
-        if (boundary < 0.0) {
-          t = texture2D(inSampler, texCoord);
-        } else {
-          // Rotate the position
-          float angle = 2.0 * boundary;
-          vec2 rotation = vec2(sin(angle), cos(angle));
-          vec2 fromCenter = texCoord - vec2(0.5);
-          vec2 rotatedPosition = vec2(
-            fromCenter.x * rotation.y + fromCenter.y * rotation.x,
-            fromCenter.y * rotation.y - fromCenter.x * rotation.x) + vec2(0.5);
-          t = texture2D(inSampler, rotatedPosition);
-        }
+        vec4 t = texture2D(inSampler, texCoord);
 
         // adjust brightness
         t = t + brightness;
