@@ -27,10 +27,12 @@ class WebGLTransform { // eslint-disable-line no-unused-vars
     this.texture_ = null;
     /** @private {string} */
     this.debugPath_ = 'debug.pipeline.frameTransform_';
+
+this.frame_count_ = 0;
+this.start_time_ = false;
   }
   /** @override */
   async init() {
-console.log('===== T init');
     console.log('[WebGLTransform] Initializing WebGL.');
     this.canvas_ = new OffscreenCanvas(1, 1);
     const gl = /** @type {?WebGLRenderingContext} */ (
@@ -195,18 +197,26 @@ console.log('===== T init');
     gl.bindTexture(gl.TEXTURE_2D, null);
     // alpha: 'discard' is needed in order to send frames to a PeerConnection.
     controller.enqueue(new VideoFrame(this.canvas_, {timestamp, alpha: 'discard'}));
+const date = new Date();
+let time = date.getTime();
+if (!this.start_time_) {
+        this.start_time_ = time;
+}
+time -= this.start_time_;
+if ((this.frame_count_ % 10) == 0) {
+        console.log('WebGL Got filtered frame #' + this.frame_count_ + ' @ ' +
+                    time + ' ms, ' + time/this.frame_count_ + ' ms/frame ' +
+		    'size ' + width + 'x' + height);
+}
+this.frame_count_++;
+
   }
 
   /** @override */
   updateSettings(newSettings) {
-console.log('===== T updateSettings');
-console.log(newSettings);
     const gl = this.gl_;
-    if (!gl) {
-console.log('===== T updateSettings NOT updating');
+    if (!gl)
       return;
-}
-console.log('===== T updateSettings updating');
     if (newSettings["brightness"] !== undefined)
       gl.uniform1f(this.uniformLoc_["brightness"], newSettings["brightness"] / 50.0 - 1.0);
     if (newSettings["contrast"] !== undefined)

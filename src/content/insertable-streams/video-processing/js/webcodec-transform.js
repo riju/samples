@@ -29,6 +29,8 @@ class WebCodecTransform { // eslint-disable-line no-unused-vars
     //this.filter_colorspaceconversion_ = null;
     this.filter_denoise_ = null;
     **/
+this.frame_count_ = 0;
+this.start_time_ = false;
   }
 
   /** @override */
@@ -129,6 +131,21 @@ class WebCodecTransform { // eslint-disable-line no-unused-vars
       return;
     }
     this.controller_.enqueue(videoFrame);
+const width = videoFrame.displayWidth;
+const height = videoFrame.displayHeight;
+const date = new Date();
+let time = date.getTime();
+if (!this.start_time_) {
+        this.start_time_ = time;
+}
+time -= this.start_time_;
+if ((this.frame_count_ % 10) == 0) {
+        console.log('VideoFilter Got filtered frame #' + this.frame_count_ + ' @ ' +
+                    time + ' ms, ' + time/this.frame_count_ + ' ms/frame ' +
+		    'size ' + width + 'x' + height);
+}
+this.frame_count_++;
+
   }
 
   error(e) {

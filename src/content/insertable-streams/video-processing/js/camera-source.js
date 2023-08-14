@@ -40,7 +40,7 @@ class CameraSource { // eslint-disable-line no-unused-vars
     if (this.stream_) return this.stream_;
     console.log('[CameraSource] Requesting camera.');
     this.stream_ =
-        await navigator.mediaDevices.getUserMedia({audio: false, video: true});
+        await navigator.mediaDevices.getUserMedia({audio: false, video: { width: 640, height: 480 }});
     console.log(
         '[CameraSource] Received camera stream.',
         `${this.debugPath_}.stream_ =`, this.stream_);

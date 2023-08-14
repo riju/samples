@@ -110,6 +110,7 @@ class CanvasSource { // eslint-disable-line no-unused-vars
     // Resize canvas based on displayed size; or if not visible, based on the
     // output video size.
     // VideoFrame prefers to have dimensions that are even numbers.
+/*
     if (this.visibility_) {
       this.canvas_.width = roundToEven(this.canvas_.clientWidth);
     } else {
@@ -120,7 +121,9 @@ class CanvasSource { // eslint-disable-line no-unused-vars
         this.canvas_.width = roundToEven(outputVideo.clientWidth);
       }
     }
-    this.canvas_.height = roundToEven(this.canvas_.width / CANVAS_ASPECT_RATIO);
+    this.canvas_.height = roundToEven(this.canvas_.width / CANVAS_ASPECT_RATIO);*/
+this.canvas_.width = 720;
+this.canvas_.height = 576;
 
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, this.canvas_.width, this.canvas_.height);

@@ -72,7 +72,8 @@ class VideoSource { // eslint-disable-line no-unused-vars
     this.video_.loop = true;
     this.video_.muted = true;
     // All browsers that support insertable streams also support WebM/VP8.
-    this.video_.src = '../../../video/chrome.webm';
+//    this.video_.src = '../../../video/chrome.webm';
+    this.video_.src = 'video.webm';
     this.video_.load();
     this.video_.play();
     this.updateVideoVisibility();
