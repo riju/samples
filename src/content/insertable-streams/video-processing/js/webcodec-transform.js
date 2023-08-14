@@ -42,13 +42,12 @@ class WebCodecTransform { // eslint-disable-line no-unused-vars
       output: frame => this.handleEncodedFrame(frame),
       error: this.error
     });
-
-    /**
-    this.filterBrightness_ = new VideoFilter({
+    this.filter_brightness_ = new VideoFilter({
       output: frame => this.handleFilteredFrame(frame),
       error: this.error
     });
 
+    /**
     this.filterContrast_ = new VideoFilter({
       output: frame => this.handleFilteredFrame(frame),
       error: this.error
@@ -75,30 +74,30 @@ class WebCodecTransform { // eslint-disable-line no-unused-vars
     });
   */
 
-    this.encoder_.configure({codec: 'vp8', width: 640, height: 480});
-    this.decoder_.configure({codec: 'vp8', width: 640, height: 480});
+    this.encoder_.configure({codec: 'vp8', hardwareAcceleration: 'prefer-software', width: 640, height: 480});
+    this.decoder_.configure({codec: 'vp8', hardwareAcceleration: 'prefer-software', width: 640, height: 480});
 
   /** TODO(riju) : Put up multiple filters */
   // console.log ("Riju : ", parseInt(document.querySelector("#brightnessSliderValue")));
-  // this.filterBrightness_.configure({filter: 'brightness', width: 640, height: 480, strength: parseInt(document.querySelector("#brightnessSliderValue"))});
+    this.filter_brightness_.configure({filter: 'brightness', codedWidth: 720, codedHeight: 576 });
   /*
-    this.filterContrast_.configure({filter: 'contrast', width: 640, height: 480, strength: 0.5 });
-    this.filterHue_.configure({filter: 'hue', width: 640, height: 480, strength: 0.5 });
-    this.filterSaturation_.configure({filter: 'saturation', width: 640, height: 480, strength: 0.5 });
-    this.filterWhitebalance_.configure({filter: 'whitebalance', width: 640, height: 480, strength: 0.5 });
-    this.filterDenoise_.configure({filter: 'denoise', width: 640, height: 480, strength: 0.5 });
+    this.filter_contrast_.configure({filter: 'contrast', width: 640, height: 480, strength: 0.5 });
+    this.filter_hue_.configure({filter: 'hue', width: 640, height: 480, strength: 0.5 });
+    this.filter_saturation_.configure({filter: 'saturation', width: 640, height: 480, strength: 0.5 });
+    this.filter_whitebalance_.configure({filter: 'whitebalance', width: 640, height: 480, strength: 0.5 });
+    this.filter_denoise_.configure({filter: 'denoise', width: 640, height: 480, strength: 0.5 });
   */
   }
 
   /** @override */
   async transform(frame, controller) {
-    if (!this.encoder_) {
+    if (!this.filter_brightness_) {
       frame.close();
       return;
     }
     try {
       this.controller_ = controller;
-      this.encoder_.encode(frame);
+      this.filter_brightness_.filter(frame);
     } finally {
       frame.close();
     }
@@ -124,8 +123,12 @@ class WebCodecTransform { // eslint-disable-line no-unused-vars
   }
 
   // TODO(riju) : Do nothing now.
-  handleFilteredFrame(frame) {
-   return;
+  handleFilteredFrame(videoFrame) {
+    if (!this.controller_) {
+      videoFrame.close();
+      return;
+    }
+    this.controller_.enqueue(videoFrame);
   }
 
   error(e) {
